@@ -1,0 +1,159 @@
+---
+title: "Rpf root exudate enzyme activity"
+date: "Februrary 15th, 2018"
+output: html_document
+---
+
+1) Aim: 
+
+
+2) Methods: 
+
+
+3) Set working space
+
+# Set Directory
+```{r, message=FALSE, warning=FALSE}
+rm(list=ls())
+getwd()
+setwd("~/../Github/TransgenicRpfArabiosis")
+```
+
+# Load packages
+```{r, message=FALSE, warning=FALSE}
+require("ggplot2")
+require("plyr")
+require("png")
+require("grid")
+
+# Load small sem calculation function 
+sem <- function(x, ...){sd(x, na.rm = TRUE)/sqrt(length(na.omit(x)))}
+```
+
+# Load data
+
+```{r}
+setwd("~/../Github/TransgenicRpfArabiosis/data")
+
+# Load EnzCheck data results
+enzchk <- read.delim("20180215_EnzCheck_1.txt", sep = ",", header = TRUE)
+
+# Look at the results 
+head(enzchk)
+
+# Set Treatment as factor 
+enzchk$Treatment <- as.factor(enzchk$Treatment)
+```
+
+4) Visualization of results 
+
+# Bar plot figure 
+
+```{r}
+# Subset out the lysozyme treatment
+enz <- enzchk[-9:-12,]
+
+# EnzCheck data points # 
+enz.col <- enz[ which(enz$Treatment == "Col-0"),]     # col-0 line
+enz.rpf <- enz[ which(enz$Treatment == "Rpf"),]       # recombinant Rpf
+enz.sub <- enz[ which(enz$Treatment == "Substrate"),] # substrate
+enz.t1 <- enz[ which(enz$Treatment == "T1"),]         # T1 line
+enz.t4 <- enz[ which(enz$Treatment == "T4"),]         # T4 line
+
+# Calculating enzcheck values # 
+enz.mean <- aggregate(enz$Absorbance ~ Treatment, enz, mean)
+enz.sem <- aggregate(enz$Absorbance ~ Treatment, enz, sem)
+enz.sem.LL <- enz.mean[2] + enz.sem[2]
+enz.sem.UL <- enz.mean[2] - enz.sem[2]
+enz.table <- data.frame(enz.mean[1], enz.mean[2], enz.sem[2],
+          enz.sem.LL[1], enz.sem.UL[1])
+colnames(enz.table) <- c("Treatment", "mean", "sem", "LCI", "UCI")
+enz.table <- enz.table[order(enz.table$mean),]
+
+rownames(enz.table) <- seq(length=nrow(enz.table)) 
+
+# Plotting Enzcheck absorbance values # 
+png(filename="../figures/Fig1-ArabidopsisLysozyme.png",
+    width = 1200, height = 800, res = 96*2)
+par(mar = c(5, 5, 1, 1))
+
+enz.fig <- plot(jitter(rep(1, length(enz.sub$Absorbance)), amount = 0.1), enz.sub$Absorbance,
+      ylim = c(0, 5000), xlim = c(0.5, 5.5), pch = 21, col = "lightgrey", bg = "lightgrey", lwd = 3.5,
+      cex = 1.7, yaxt = "n", xaxt = "n", cex.lab = 2, cex.axis = 2,
+      las = 1, ylab = "", xlab = "")
+      box(lwd = 2)
+points(jitter(rep(2, length(enz.rpf$Absorbance)), amount = 0.1), enz.rpf$Absorbance, pch = 21, 
+       bg = "lightgrey", col = "lightgrey", lwd = 2, cex = 1.7)
+points(jitter(rep(3, length(enz.col$Absorbance)), amount = 0.1), enz.col$Absorbance, pch = 21, 
+       bg = "lightgrey", col = "lightgrey", lwd = 2, cex = 1.7)
+points(jitter(rep(4, length(enz.t1$Absorbance)), amount = 0.1), enz.t1$Absorbance, pch = 21, 
+       bg = "lightgrey", col = "lightgrey", lwd = 2, cex = 1.7)
+points(jitter(rep(5, length(enz.t4$Absorbance)), amount = 0.1), enz.t4$Absorbance, pch = 21, 
+       bg = "lightgrey", col = "lightgrey", lwd = 2, cex = 1.7)
+
+# Adding mean data pointfor each treatment # 
+points(1, mean(enz.sub$Absorbance), pch = 21, col = "black", 
+       bg = "NA", lwd = 2, cex = 2.5) 
+points(2, mean(enz.rpf$Absorbance), pch = 21, col = "black", 
+       bg = "NA", lwd = 2, cex = 2.5)  
+points(3, mean(enz.col$Absorbance), pch = 21, col = "black", 
+       bg = "NA", lwd = 2, cex = 2.5) 
+points(4, mean(enz.t1$Absorbance), pch = 21, col = "black", 
+       bg = "NA", lwd = 2, cex = 2.5)  
+points(5, mean(enz.t4$Absorbance), pch = 21, col = "black", 
+       bg = "NA", lwd = 2, cex = 2.5)  
+
+box(lwd = 2)
+
+# Y axis labels
+mtext(expression('Absorabance'), side = 2,
+      outer = FALSE, cex = 1.5, line = 4, adj = 0.5)
+
+# Major Axes
+axis(side = 2, lwd.ticks = 2, cex.axis = 1.25, las = 1, 
+     labels = c("0", "1000", "2000", "3000", "4000", "5000"), 
+     at = c(0, 1000, 2000, 3000, 4000, 5000))
+
+axis(side = 4, lwd.ticks = 2, cex.axis = 1, las = 1,
+     at=c(0, 1000, 2000, 3000, 4000, 5000), labels = F, tck = -0.02)
+
+axis(side = 1, lwd.ticks = 2, cex.axis = 1.25, las = 1,
+     labels = c("Substrate", "Rpf", "Col-0", "T1", "T4"), at = c(1, 2, 3, 4, 5))
+
+axis(side = 3, lwd.ticks = 2, cex.axis = 1.5, las = 1,
+     at = c(1, 2, 3, 4, 5), labels = F, tck = -0.02)
+
+# Adding SEM # 
+arrows(x0 = c(3,1,5,2,4), y0 = enz.table$mean, y1 = enz.table$LCI, angle = 90,
+       length = 0.25, lwd = 2)
+arrows(x0 = c(3,1,5,2,4), y0 = enz.table$mean, y1 = enz.table$UCI, angle = 90,
+       length=0.25, lwd = 2)
+
+# Close Plot Device
+dev.off()
+graphics.off()
+
+# Show Plot
+img <- readPNG("../figures/Fig1-ArabidopsisLysozyme.png")
+grid.raster(img)
+
+```
+
+5) Statistics 
+
+# Run ANOVA
+
+```{r}
+anova_exp1 <- aov(Absorbance ~ Treatment, data = enz)
+
+summary(anova_exp1)
+
+TukeyHSD(anova_exp1)
+
+# Treatment had a significant effect on Absorbance 
+# With the biggest difference between T0 and Rpf (p<0.00001), T1 and T0 (p<0.00001)
+# There is no significant difference between T1 and Rpf (p 0.97)
+```
+
+
+
