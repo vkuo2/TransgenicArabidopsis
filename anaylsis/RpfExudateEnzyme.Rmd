@@ -16,7 +16,7 @@ output: html_document
 ```{r, message=FALSE, warning=FALSE}
 rm(list=ls())
 getwd()
-setwd("~/../Github/TransgenicRpfArabiosis")
+setwd("~/../Github/TransgenicArabidopsis")
 ```
 
 # Load packages
@@ -33,7 +33,7 @@ sem <- function(x, ...){sd(x, na.rm = TRUE)/sqrt(length(na.omit(x)))}
 # Load data
 
 ```{r}
-setwd("~/../Github/TransgenicRpfArabiosis/data")
+setwd("~/../Github/TransgenicArabidopsis/data")
 
 # Load EnzCheck data results
 enzchk <- read.delim("20180215_EnzCheck_1.txt", sep = ",", header = TRUE)
@@ -106,8 +106,8 @@ points(5, mean(enz.t4$Absorbance), pch = 21, col = "black",
 box(lwd = 2)
 
 # Y axis labels
-mtext(expression('Absorabance'), side = 2,
-      outer = FALSE, cex = 1.5, line = 4, adj = 0.5)
+mtext(expression('Relative Fluorescence'), side = 2,
+      outer = FALSE, cex = 1.5, line = 3.75, adj = 0.5)
 
 # Major Axes
 axis(side = 2, lwd.ticks = 2, cex.axis = 1.25, las = 1, 
@@ -118,7 +118,7 @@ axis(side = 4, lwd.ticks = 2, cex.axis = 1, las = 1,
      at=c(0, 1000, 2000, 3000, 4000, 5000), labels = F, tck = -0.02)
 
 axis(side = 1, lwd.ticks = 2, cex.axis = 1.25, las = 1,
-     labels = c("Substrate", "Rpf", "Col-0", "T1", "T4"), at = c(1, 2, 3, 4, 5))
+     labels = c("Substrate", "Rpf", "Col-0", "T3-1", "T3-4"), at = c(1, 2, 3, 4, 5))
 
 axis(side = 3, lwd.ticks = 2, cex.axis = 1.5, las = 1,
      at = c(1, 2, 3, 4, 5), labels = F, tck = -0.02)
