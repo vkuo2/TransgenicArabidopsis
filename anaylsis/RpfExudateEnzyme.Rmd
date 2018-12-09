@@ -150,6 +150,14 @@ summary(anova_exp1)
 
 TukeyHSD(anova_exp1)
 
+substrate.Rpf.enz <- enz[which(enz$Treatment == "Substrate" | enz$Treatment == "Rpf"), ]
+substrate.col.enz <- enz[which(enz$Treatment == "Substrate" | enz$Treatment == "Col-0"), ]
+substrate.col.enz <- enz[which(enz$Treatment == "Rpf" | enz$Treatment == "T1"), ]
+substrate.col.enz <- enz[which(enz$Treatment == "Substrate" | enz$Treatment == "T4"), ]
+
+substrate.Rpf.ttest <- t.test(Absorbance ~ Treatment, data = substrate.col.enz)
+substrate.Rpf.ttest    
+
 # Treatment had a significant effect on Absorbance 
 # With the biggest difference between T0 and Rpf (p<0.00001), T1 and T0 (p<0.00001)
 # There is no significant difference between T1 and Rpf (p 0.97)
