@@ -129,6 +129,9 @@ arrows(x0 = c(3,1,5,2,4), y0 = enz.table$mean, y1 = enz.table$LCI, angle = 90,
 arrows(x0 = c(3,1,5,2,4), y0 = enz.table$mean, y1 = enz.table$UCI, angle = 90,
        length=0.25, lwd = 2)
 
+# Sample number label
+mtext(text = expression(italic("n")~" = 4"), side = 3, line = -2.2, adj = 0.05, col="black", cex=1.25)
+
 # Close Plot Device
 dev.off()
 graphics.off()
